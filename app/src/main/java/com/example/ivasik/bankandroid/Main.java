@@ -37,6 +37,10 @@ public class Main extends AppCompatActivity {
     private ListView listView;
     private ArrayList<String> msgArray = new ArrayList<>();
 
+    public void kill() {
+        flag = true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +80,7 @@ public class Main extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private class Background extends AsyncTask<Void, Void, Void> {
 
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -104,6 +109,13 @@ public class Main extends AppCompatActivity {
                     msgT = in.nextLine();
                     msgArray.add(0, msgT);
 
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
                 }
             }
 
@@ -124,7 +136,6 @@ public class Main extends AppCompatActivity {
             out.println(msg);
             out.flush();
             editMsg.setText("");
-            adapter.notifyDataSetChanged();
         }
 
 
@@ -133,30 +144,19 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (!editMsg.getText().toString().equals(""))
+            out.println("[ \"" + editName.getText().toString() + "\" ливнул]");
+        else
+            out.println("[Вышел ноунейм]");
 
+        out.println("exit");
+        out.flush();
+        out.close();
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        kill();
     }
 }
-
-
-/*
-                editMsg.setOnKeyListener(new View.OnKeyListener() {
-
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                        if (event.getAction() == KeyEvent.ACTION_DOWN)
-                            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-
-                                msg.add(0, editName.getText().toString() + ": " + editMsg.getText().toString());
-                                out.println(msg.toString());
-                                System.out.println(msg.toString());
-                                adapter.setNotifyOnChange(true);
-                                adapter.notifyDataSetChanged();
-                                editMsg.setText("");
-                                return true;
-                            }
-
-                        return false;
-                    }
-                });
-*/

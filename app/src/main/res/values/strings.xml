@@ -2,5 +2,6 @@
     <string name="app_name">Chat</string>
     <string name="editText3">Введите сообщение</string>
     <string name="editText2">Веше имя...</string>
-    <string name="button1">Go</string>
+    <string name="button1">Соединить</string>
+    <string name="button2">Отправить</string>
 </resources>
